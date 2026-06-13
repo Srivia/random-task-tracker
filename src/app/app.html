@@ -1,0 +1,108 @@
+<header class="flex items-center justify-between p-4 bg-light-green text-[#685AFF]">
+  <div class="font-bold text-2xl">Random</div>
+  <nav class="flex gap-6">
+    <a class="cursor-pointer">Tasks</a>
+    <a class="cursor-pointer">Timer</a>
+    <a class="cursor-pointer">Progress</a>
+  </nav>
+  <div class="cursor-pointer">Profile</div>
+</header>
+
+<div class="mt-10 flex items-center justify-center">
+  <div class="bg-gray-100 p-8 rounded-xl shadow-md text-center">
+    <div class="text-6xl font-bold mb-6">
+      {{ timerDisplayText() }}
+    </div>
+
+    <!-- <div class="flex gap-4 justify-center">
+      <button class="px-4 py-2 bg-green-500 text-white rounded" (click)="startTimer()">
+        @if (resumeState()) {
+          Resume
+        } @else {
+          Start
+        }
+      </button>
+
+      <button class="px-4 py-2 bg-red-500 text-white rounded" (click)="clearTimer()">Stop</button>
+
+      <button class="px-4 py-2 bg-blue-500 text-white rounded" (click)="restartTimer()">
+        Restart
+      </button>
+    </div> -->
+  </div>
+</div>
+
+<div class="w-full max-w-3xl mx-auto p-6 space-y-6">
+  <!-- Input row -->
+  <div class="flex gap-3">
+    <input
+      type="text"
+      placeholder="What task are you doing?"
+      [value]="currentTaskName()"
+      (input)="currentTaskName.set($any($event.target).value)"
+      [disabled]="isTimerOn()"
+      (keydown.enter)="toggleTask()"
+      class="flex-1 rounded border border-gray-300 px-4 py-2"
+    />
+    <div class="flex items-center gap-2">
+        <button class="rounded bg-green-600 px-4 py-2 text-white" (click)="toggleTask()">
+          @if (isTimerOn()) { ⏸ }
+          @else { ▶ }
+        </button>
+    </div>
+  </div>
+
+  <!-- Task list -->
+  <div class="space-y-4">
+    <!-- One task -->
+
+    <!-- @for ([taskName, task] of tasks().entries(); track $index) { -->
+    @for (task of tasks(); track $index) {
+      <div class="rounded border border-gray-300 p-4 space-y-4">
+        <!-- First row -->
+        <div class="flex items-center justify-between gap-4">
+          <div class="font-medium">{{ task.taskName }}</div>
+
+          <div class="text-sm text-gray-600">Played: {{ task.taskCount }}</div>
+          <div class="flex items-center gap-2">
+            <button class="rounded bg-green-600 px-4 py-2 text-white" (click)="toggleTask()"
+            [disabled]="task.taskName != currentTaskName() && isTimerOn()">
+              @if ( task.taskName == currentTaskName() && isTimerOn()) { ⏸ }
+              @else { ▶ }
+            </button>
+            <button class="rounded bg-red-600 px-4 py-2 text-white" (click)="deleteTask($index)">🗑</button>
+          </div>
+        </div>
+
+        <!-- Second row -->
+        @if (task.timeEntries.length != 0) {
+          <div class="space-y-2">
+            <div class="font-medium text-sm">Time entries:</div>
+
+            <div class="grid grid-cols-5 gap-5 text-sm font-medium border-b pb-2">
+              <div>S.no</div>
+              <div>Start time</div>
+              <div>End time</div>
+              <div>Time Elapsed</div>
+              <div></div>
+            </div>
+
+            @for (entry of task.timeEntries; track $index) {
+              <div class="grid grid-cols-5 gap-5 text-sm py-1">
+                <div>{{ $index + 1 }}</div>
+                <div>{{ entry.startTime | date: 'MMM d, h:mm a' }}</div>
+                <div>{{ entry.endTime | date: 'MMM d, h:mm a' }}</div>
+                <div>{{ entry.timeLapsed }}</div>
+                <div class="flex items-center gap-2">
+                  <button class="rounded bg-red-600 px-4 py-2 text-white" (click)="deleteTimeEntry(task, $index)">🗑</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<router-outlet />
